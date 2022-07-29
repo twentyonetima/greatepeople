@@ -4,5 +4,14 @@
     <h1>Main page</h1>
 {% endblock %}
 {% block content %}
-    <p>Content of Main page</p>
+    <ul>
+    {% for p in posts %}
+        <li>
+            <h2>{{ p.name }} {{ p.last_name }}</h2>
+            <p>{{ p.content }}</p>
+            <p>{{ p.age }}</p>
+            <hr>
+        </li>
+    {% endfor %}
+    </ul>
 {% endblock %}

@@ -2,10 +2,13 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 # Create your views here.
+
+from .models import *
 menu = ['About site', 'Add article', 'Feedback', 'Sign in']
 
 def index(request):
-    return render(request, 'men/index.html', {'menu': menu, 'title': 'Main page'})
+    posts = Men.objects.all()
+    return render(request, 'men/index.html', {'posts': posts, 'menu': menu, 'title': 'Main page'})
 
 
 def about(request):
