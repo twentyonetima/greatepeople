@@ -1,17 +1,15 @@
 {% extends 'men/base.html' %}
 
-{% block title %}
-    <h1>Main page</h1>
-{% endblock %}
 {% block content %}
-    <ul>
+<ul class="list-articles">
     {% for p in posts %}
-        <li>
-            <h2>{{ p.name }} {{ p.last_name }}</h2>
-            <p>{{ p.content }}</p>
-            <p>{{ p.age }}</p>
-            <hr>
-        </li>
-    {% endfor %}
-    </ul>
+        <li><h2>{{ p.name }} {{ p.last_name }}({{ p.age }})</h2>
+            	{% autoescape on %}
+	            {{p.content|linebreaks|truncatewords:50}}
+	            {% endautoescape %}
+            <div class="clear"></div>
+			<p class="link-read-post"><a href="#">Читать пост</a></p>
+			</li>
+	{% endfor %}
+</ul>
 {% endblock %}
