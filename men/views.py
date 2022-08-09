@@ -1,7 +1,8 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 
 # Create your views here.
+from men.forms import AddArticleForm
 
 from .models import *
 menu = [{'title': 'About site', 'url_name': 'about'},
@@ -27,7 +28,15 @@ def about(request):
 
 
 def addarticle(request):
-    return render(request, 'men/addarticle.html', {'menu': menu,
+    if request.method == 'POST':
+        form = AddArticleForm(request.POST, request.FILES)
+        if form.is_valid():
+            # print(form.cleaned_data)
+            form.save()
+            return redirect('home')
+    else:
+        form = AddArticleForm()
+    return render(request, 'men/addarticle.html', {'form': form, 'menu': menu,
                                                    'title': 'Add article'})
 
 
