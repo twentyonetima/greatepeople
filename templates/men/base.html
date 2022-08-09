@@ -1,4 +1,5 @@
 {% load static %}
+{% load men_tags %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -39,20 +40,7 @@
     <li><a href="{% url 'home' %} " id="MainCategory">Category</a></li>
 {% endif %}
 
-<ul>
-{% for c in cats %}
-    {% if c.pk == cat_selected %}
-        <li class="selected">{{ c.name }}</li>
-    {% else %}
-        <li><a href="{{ c.get_absolute_url }}" id="ListCategory">{{ c.name }}</a></li>
-    {% endif %}
-{% endfor %}
-</ul>
-{#    <ul>#}
-{#        <a href=""><li>Musicians</li></a>#}
-{#        <a href=""><li>Actors</li></a>#}
-{#        <a href=""><li>Businessmen</li></a>#}
-{#    </ul>#}
+{% show_categories 'name' cat_selected %}
 
 {#    <div class="list-group">#}
 {#        <a href="#" class="list-group-item list-group-item-action active">#}

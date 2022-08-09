@@ -19,10 +19,10 @@ class MenAdminForm(forms.ModelForm):
 
 @admin.register(Men)
 class MenAdmin(admin.ModelAdmin):
-    list_display = ('id', 'get_full_name', 'get_image', 'time_create',
+    list_display = ('id', 'full_name', 'get_image', 'time_create',
                     'time_update', 'is_published')
-    list_display_links = ('id', 'get_full_name')
-    search_fields = ('get_full_name', 'content', 'cat__name')
+    list_display_links = ('id', 'full_name')
+    search_fields = ('full_name', 'content', 'cat__name')
     list_filter = ('cat',)
     list_editable = ('is_published',)
     form = MenAdminForm
@@ -41,7 +41,7 @@ class MenAdmin(admin.ModelAdmin):
             "fields": (('year_of_birth', 'year_of_death', 'age'),)
         }),
         ("Options", {
-            "fields": (('is_published', 'cat'),)
+            "fields": (('is_published', 'cat', 'slug'),)
         }),
     )
 
@@ -49,12 +49,6 @@ class MenAdmin(admin.ModelAdmin):
         return mark_safe(f'<img src={obj.photo.url} width="50" height="60"')
 
     get_image.short_description = 'Image'
-
-    def get_full_name(self, obj):
-        full_name = obj.name + ' ' + obj.last_name
-        return full_name
-
-    get_full_name.short_description = 'Full name'
 
     readonly_fields = ('get_image',)
 
@@ -64,6 +58,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'url')
     list_display_links = ('id', 'name')
     readonly_fields = ('description',)
+    prepopulated_fields = {'url': ('name',)}
 
 
 admin.site.site_title = 'Greate men'

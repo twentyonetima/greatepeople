@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
 # Create your views here.
@@ -12,12 +12,8 @@ menu = [{'title': 'About site', 'url_name': 'about'},
 
 
 def index(request):
-    posts = Men.objects.all()
-    cats = Category.objects.all()
 
     context = {
-        'posts': posts,
-        'cats': cats,
         'menu': menu,
         'title': 'Main page',
         'cat_selected': 0,
@@ -26,11 +22,13 @@ def index(request):
 
 
 def about(request):
-    return render(request, 'men/about.html', {'menu': menu, 'title': 'About site'})
+    return render(request, 'men/about.html', {'menu': menu,
+                                              'title': 'About site'})
 
 
 def addarticle(request):
-    return HttpResponse('Add article')
+    return render(request, 'men/addarticle.html', {'menu': menu,
+                                                   'title': 'Add article'})
 
 
 def feedback(request):
@@ -41,17 +39,22 @@ def login(request):
     return HttpResponse('Sing in')
 
 
-def show_post(request, post_id):
-    return HttpResponse(f'Show article with id = {post_id}')
+def show_post(request, post_slug):
+    post = get_object_or_404(Men, slug=post_slug)
+
+    context = {
+        'post': post,
+        'menu': menu,
+        'title': post.full_name,
+        'cat_selected': post.cat_id,
+    }
+
+    return render(request, 'men/post.html', context=context)
 
 
 def show_category(request, cat_id):
-    posts = Men.objects.filter(cat_id=cat_id)
-    cats = Category.objects.all()
 
     context = {
-        'posts': posts,
-        'cats': cats,
         'menu': menu,
         'title': 'Category List',
         'cat_selected': cat_id,

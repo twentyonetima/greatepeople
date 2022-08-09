@@ -1,7 +1,9 @@
 {% extends 'men/base.html' %}
+{% load men_tags %}
 
 {% block content %}
 <div class="features">
+{% get_post cat_selected as posts %}
     {% for p in posts %}
         <div class="border-content">
 {#        <div class="article-panel">#}
@@ -12,7 +14,7 @@
         {% if p.photo %}
             <p><img class="image-men" alt="" src="{{ p.photo.url }}"></p>
         {% endif %}
-        <li><h2>{{ p.name }} {{ p.last_name }}</h2>
+        <li><h2>{{ p.full_name }}</h2>
             	{% autoescape on %}
 	            {{p.content|linebreaks|truncatewords:50}}
 	            {% endautoescape %}
