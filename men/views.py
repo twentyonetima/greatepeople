@@ -1,41 +1,27 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.http import HttpResponse
 
 # Create your views here.
 from django.views.generic import ListView, DetailView, CreateView
-from men.forms import AddArticleForm
-
-from .models import *
-menu = [{'title': 'About site', 'url_name': 'about'},
-        {'title': 'Add article', 'url_name': 'add_article'},
-        {'title': 'Feedback', 'url_name': 'feedback'},
-        {'title': 'Sign in', 'url_name': 'login'},
-        ]
 
 
-class MenMain(ListView):
+from .forms import *
+from .utils import *
+
+
+class MenMain(DataMixin, ListView):
     model = Men
     template_name = 'men/index.html'
     context_object_name = 'posts'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
-        context['title'] = 'Main page'
-        context['cat_selected'] = 0
-        return context
+        context_def = self.get_user_context(title='Main page')
+        return dict(list(context.items()) + list(context_def.items()))
 
     def get_queryset(self):
         return Men.objects.filter(is_published=True)
-
-# def index(request):
-#
-#     context = {
-#         'menu': menu,
-#         'title': 'Main page',
-#         'cat_selected': 0,
-#     }
-#     return render(request, 'men/index.html', context=context)
 
 
 def about(request):
@@ -43,28 +29,14 @@ def about(request):
                                               'title': 'About site'})
 
 
-class AddArticle(CreateView):
+class AddArticle(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddArticleForm
     template_name = 'men/addarticle.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
-        context['title'] = 'Add article'
-        return context
-
-
-# def addarticle(request):
-#     if request.method == 'POST':
-#         form = AddArticleForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             # print(form.cleaned_data)
-#             form.save()
-#             return redirect('home')
-#     else:
-#         form = AddArticleForm()
-#     return render(request, 'men/addarticle.html', {'form': form, 'menu': menu,
-#                                                    'title': 'Add article'})
+        context_def = self.get_user_context(title='Add article')
+        return dict(list(context.items()) + list(context_def.items()))
 
 
 def feedback(request):
@@ -75,7 +47,7 @@ def login(request):
     return HttpResponse('Sing in')
 
 
-class ShowPost(DetailView):
+class ShowPost(DataMixin, DetailView):
     model = Men
     template_name = 'men/post.html'
     slug_url_kwarg = 'post_slug'
@@ -83,25 +55,11 @@ class ShowPost(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
-        context['title'] = context['post']
-        return context
+        context_def = self.get_user_context(title=context['post'])
+        return dict(list(context.items()) + list(context_def.items()))
 
 
-# def show_post(request, post_slug):
-#     post = get_object_or_404(Men, slug=post_slug)
-#
-#     context = {
-#         'post': post,
-#         'menu': menu,
-#         'title': post.full_name,
-#         'cat_selected': post.cat_id,
-#     }
-#
-#     return render(request, 'men/post.html', context=context)
-
-
-class MenCategory(ListView):
+class MenCategory(DataMixin, ListView):
     model = Men
     template_name = 'men/index.html'
     context_object_name = 'posts'
@@ -109,21 +67,11 @@ class MenCategory(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
-        context['title'] = 'Category: ' + str(context['posts'][0].cat)
-        context['cat_selected'] = context['posts'][0].cat_id
-        return context
+        context_def = self.get_user_context(title='Category: ' +
+                                                  str(context['posts'][0].cat),
+                                            cat_selected=context['posts'][0].cat_id)
+        return dict(list(context.items()) + list(context_def.items()))
 
     def get_queryset(self):
         return Men.objects.filter(cat__url=self.kwargs['cat_slug'],
                                   is_published=True)
-
-
-# def show_category(request, cat_id):
-#
-#     context = {
-#         'menu': menu,
-#         'title': 'Category List',
-#         'cat_selected': cat_id,
-#     }
-#     return render(request, 'men/index.html', context=context)
