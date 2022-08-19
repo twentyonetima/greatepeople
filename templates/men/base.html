@@ -25,10 +25,17 @@
         <li><a href="{% url m.url_name %}" class="nav-link px-2 link-secondary" id="MainMenu">{{m.title}}</a></li>
       </ul>
 {% endfor %}
-{#      <div class="col-md-3 text-end">#}
-{#        <button type="button" class="btn btn-outline-primary me-2">Login</button>#}
-{#        <button type="button" class="btn btn-primary">Sign-up</button>#}
-{#      </div>#}
+    {% if request.user.is_authenticated %}
+
+            <li class="username">{{user.username}} ({{ user.first_name }} {{ user.last_name }})</li>
+            <button type="button" class="btn btn-outline-primary me-2"><a href="{% url 'logout' %}">Logout</a></button>
+
+    {% else %}
+      <div class="col-md-3 text-end">
+          <button type="button" class="btn btn-outline-primary me-2"><a href="{% url 'login' %}">Login</a></button>
+          <button type="button" class="btn btn-primary"><a href="{% url 'sign_up' %}">Sign up</a></button>
+      </div>
+    {% endif %}
     </header>
 {% endblock mainmenu %}
 
@@ -52,12 +59,43 @@
 
 </aside>
 
-
+<!-- Content --->
+<div>
 <main>
     {% block content %}
     {% endblock %}
 </main>
 
+    <!-- Pagination --->
+{% if page_obj.has_other_pages %}
+<nav class="list-pages">
+    <ul>
+{% if page_obj.has_previous %}
+<li class="page-num">
+	<a href="?page={{ page_obj.previous_page_number }}">&lt;</a>
+</li>
+{% endif %}
+
+        {% for p in paginator.page_range %}
+		{% if page_obj.number == p %}
+        <li class="page-num page-num-selected">{{ p }}</li>
+		{% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2  %}
+        <li class="page-num">
+            <a href="?page={{ p }}">{{ p }}</a>
+        </li>
+		{% endif %}
+        {% endfor %}
+
+{% if page_obj.has_next %}
+<li class="page-num">
+	<a href="?page={{ page_obj.next_page_number }}">&gt;</a>
+</li>
+{% endif %}
+
+    </ul>
+</nav>
+{% endif %}
+	</div>
 
 </body>
 </html>
