@@ -64,16 +64,16 @@ class MenCategory(DataMixin, ListView):
     context_object_name = 'posts'
     allow_empty = False
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context_def = self.get_user_context(title='Category: ' +
-                                                  str(context['posts'][0].cat),
-                                            cat_selected=context['posts'][0].cat_id)
-        return dict(list(context.items()) + list(context_def.items()))
-
     def get_queryset(self):
         return Men.objects.filter(cat__url=self.kwargs['cat_slug'],
-                                  is_published=True)
+                                  is_published=True).select_related('cat')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c = Category.objects.get(slug=self.kwargs['cat_slug'])
+        context_def = self.get_user_context(title='Category: ' + str(c.name),
+                                            cat_selected=c.pk)
+        return dict(list(context.items()) + list(context_def.items()))
 
 
 class RegisterUser(DataMixin, CreateView):
