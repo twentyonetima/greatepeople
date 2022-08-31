@@ -1,5 +1,7 @@
 {% load static %}
 {% load men_tags %}
+{% load cache %}
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -41,6 +43,7 @@
 {% endblock mainmenu %}
 
     <!-- Sidebar --->
+    {% cache 60 sidebar %}
 <aside>
 {% if cat_selected == 0 %}
     <li class="category-selected">Category</li>
@@ -59,6 +62,7 @@
 
 
 </aside>
+    {% endcache %}
 
 <!-- Content --->
 <div>

@@ -1,3 +1,5 @@
+from django.core.cache import cache
+
 from .models import *
 
 menu = [{'title': 'About site', 'url_name': 'about'},
@@ -11,7 +13,10 @@ class DataMixin:
 
     def get_user_context(self, **kwargs):
         context = kwargs
-        cats = Category.objects.all()
+        cats = cache.get('cats')
+        if not cats:
+            cats = Category.objects.all()
+            cache.set('cats', cats, 60)
 
         user_menu = menu.copy()
         if not self.request.user.is_authenticated:

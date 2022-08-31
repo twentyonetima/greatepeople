@@ -1,10 +1,11 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
+from django.views.decorators.cache import cache_page
 
 from .views import *
 
 urlpatterns = [
-    path('', MenMain.as_view(), name='home'),
+    path('', cache_page(60)(MenMain.as_view()), name='home'),
     path('about/', about, name='about'),
     path('addarticle/', AddArticle.as_view(), name='add_article'),
     path('feedback/', feedback, name='feedback'),
