@@ -8,7 +8,7 @@ urlpatterns = [
     path('', cache_page(60)(MenMain.as_view()), name='home'),
     path('about/', about, name='about'),
     path('addarticle/', AddArticle.as_view(), name='add_article'),
-    path('feedback/', feedback, name='feedback'),
+    path('feedback/', ContactFormView.as_view(), name='feedback'),
     path('login/', LoginUser.as_view(), name='login'),
     path('password_reset/', auth_views.PasswordResetView.as_view(
         template_name='password/password_reset.html')),

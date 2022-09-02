@@ -6,8 +6,7 @@ from django.http import HttpResponse
 
 # Create your views here.
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView
-
+from django.views.generic import ListView, DetailView, CreateView, FormView
 
 from .forms import *
 from .utils import *
@@ -42,8 +41,19 @@ class AddArticle(LoginRequiredMixin, DataMixin, CreateView):
         return dict(list(context.items()) + list(context_def.items()))
 
 
-def feedback(request):
-    return HttpResponse('Feedback')
+class ContactFormView(DataMixin, FormView):
+    form_class = ContactForm
+    template_name = 'men/contact.html'
+    success_url = reverse_lazy('home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context_def = self.get_user_context(title='Feedback')
+        return dict(list(context.items()) + list(context_def.items()))
+
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        return redirect('home')
 
 
 class ShowPost(DataMixin, DetailView):

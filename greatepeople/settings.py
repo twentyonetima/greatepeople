@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'men.apps.MenConfig',
     'ckeditor',
     'ckeditor_uploader',
+    'captcha',
 ]
 
 MIDDLEWARE = [
